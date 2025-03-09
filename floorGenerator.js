@@ -158,15 +158,38 @@ class WallGenerator {
 }
 
 class FloorGenerator {
-    constructor(width, height) {
+    constructor(width, height, maxFloor = 10) {
         this.width = width;
         this.height = height;
+        this.maxFloor = maxFloor;
         this.wallGenerator = new WallGenerator(width, height);
     }
 
-    generateFloor(fromDirection, sourceStairsPosition) {
-        let upStairs, downStairs;
+    generateFloor(floorNumber, fromDirection, sourceStairsPosition) {
+        let upStairs, downStairs, finish;
 
+        // On max floor, add finish point instead of up stairs
+        if (floorNumber === this.maxFloor) {
+            downStairs = { x: sourceStairsPosition.x, y: sourceStairsPosition.y };
+            do {
+                finish = this.getRandomPosition();
+            } while (this.isSamePosition(finish, downStairs));
+
+            const maze = this.wallGenerator.generate(finish, downStairs);
+
+            return {
+                player: {
+                    x: sourceStairsPosition.x,
+                    y: sourceStairsPosition.y
+                },
+                upStairs: null,
+                downStairs: downStairs,
+                finish: finish,
+                maze: maze
+            };
+        }
+
+        // Normal floor generation
         if (fromDirection === 'up') {
             upStairs = { x: sourceStairsPosition.x, y: sourceStairsPosition.y };
             do {
@@ -188,6 +211,7 @@ class FloorGenerator {
             },
             upStairs: upStairs,
             downStairs: downStairs,
+            finish: null,
             maze: maze
         };
     }
@@ -209,6 +233,7 @@ class FloorGenerator {
             },
             upStairs: upStairs,
             downStairs: downStairs,
+            finish: null,
             maze: maze
         };
     }

@@ -3,8 +3,10 @@ class Game {
         this.width = width;
         this.height = height;
         this.currentFloor = 1;
+        this.maxFloor = 10;
+        this.hasWon = false;
         this.floors = new Map();
-        this.floorGenerator = new FloorGenerator(width, height);
+        this.floorGenerator = new FloorGenerator(width, height, this.maxFloor);
         this.initializeFirstFloor();
     }
 
@@ -17,11 +19,13 @@ class Game {
     }
 
     generateNewFloor(floorNumber, fromDirection, sourceStairsPosition) {
-        return this.floorGenerator.generateFloor(fromDirection, sourceStairsPosition);
+        return this.floorGenerator.generateFloor(floorNumber, fromDirection, sourceStairsPosition);
     }
 
     setupKeyboardControls() {
         document.addEventListener('keydown', (e) => {
+            if (this.hasWon) return; // Disable controls after winning
+
             const currentFloorData = this.floors.get(this.currentFloor);
             let newX = currentFloorData.player.x;
             let newY = currentFloorData.player.y;
@@ -56,6 +60,15 @@ class Game {
             if (this.isValidMove(currentFloorData, newX, newY)) {
                 currentFloorData.player.x = newX;
                 currentFloorData.player.y = newY;
+                
+                // Check for win condition
+                if (this.currentFloor === this.maxFloor && 
+                    currentFloorData.finish &&
+                    newX === currentFloorData.finish.x && 
+                    newY === currentFloorData.finish.y) {
+                    this.hasWon = true;
+                }
+                
                 this.render();
             }
         });
@@ -68,7 +81,7 @@ class Game {
     changeFloor(direction, sourceStairsPosition) {
         const newFloorNumber = this.currentFloor + direction;
         
-        if (newFloorNumber < 1) return;
+        if (newFloorNumber < 1 || newFloorNumber > this.maxFloor) return;
 
         if (!this.floors.has(newFloorNumber)) {
             this.floors.set(
@@ -98,7 +111,13 @@ class Game {
 
     render() {
         const currentFloorData = this.floors.get(this.currentFloor);
-        let display = `Floor ${this.currentFloor}\n`;
+        let display = '';
+        
+        if (this.hasWon) {
+            display = `Congratulations! You've reached the exit on floor ${this.maxFloor}!\n\n`;
+        }
+        
+        display += `Floor ${this.currentFloor}\n`;
         
         // Top wall
         display += '#'.repeat(this.width + 2) + '\n';
@@ -113,6 +132,8 @@ class Game {
                     display += '<';
                 } else if (currentFloorData.downStairs && x === currentFloorData.downStairs.x && y === currentFloorData.downStairs.y) {
                     display += '>';
+                } else if (currentFloorData.finish && x === currentFloorData.finish.x && y === currentFloorData.finish.y) {
+                    display += 'F';
                 } else {
                     display += currentFloorData.maze[y][x];
                 }
