@@ -1,0 +1,126 @@
+=== Development Log ===
+
+[2024-03-20] Initial Project Setup
+- Created basic roguelike game structure
+- Design decisions:
+  * Used monospace font for consistent character display
+  * Chose dark theme (black background, white text) for better visibility
+  * Set default game area to 20x10 for a reasonable viewing size
+  * Used ASCII characters for game elements:
+    - '@' for player character
+    - '#' for walls
+    - '.' for floor tiles
+
+[2024-03-20] Game Mechanics Implementation
+- Implemented core movement system:
+  * Arrow key controls for intuitive navigation
+  * Collision detection with walls
+  * Player starts in center of game area
+- Technical decisions:
+  * Used CSS grid for centered layout
+  * Implemented game state using a class-based approach
+  * Used textContent for rendering to maintain simplicity
+  * Chose pre-formatted text (white-space: pre) for consistent grid display
+
+[2024-03-20] Code Organization
+- Split code into two files:
+  * index.html: Contains layout and styling
+  * game.js: Contains game logic and rendering
+- Created this devlog.txt file to track development decisions
+
+[2024-03-20] Floor Navigation System
+- Added multi-floor dungeon system:
+  * Implemented floor tracking and display
+  * Added stairs up '<' and down '>'
+  * Created floor generation system
+- Design decisions:
+  * Floor 1 starts with only down stairs
+  * New floors generate with both up and down stairs
+  * Player spawns near entry stairs for continuity
+  * Used Map data structure for floor management
+  * Stairs positioned at 1/4 and 3/4 of room dimensions for balanced layout
+- Controls added:
+  * '<' key to go upstairs when on '<' tile
+  * '>' key to go downstairs when on '>' tile
+
+[2024-03-20] Randomized Stair Positioning
+- Enhanced floor generation system:
+  * Added random positioning for stairs on each floor
+  * Implemented position memory for consistent floor layouts
+  * Created stair connection system between floors
+- Technical improvements:
+  * Added position validation to prevent stair overlap
+  * Implemented exact stair position matching between floors
+  * Enhanced player positioning logic when changing floors
+- Design decisions:
+  * Stairs maintain their position when returning to a floor
+  * Connected stairs (up/down) share the same x/y coordinates
+  * Player appears next to arrival stairs for better orientation
+
+[2024-03-20] Stair Navigation Fix
+- Corrected stair navigation behavior:
+  * Player now appears exactly at the corresponding stair position when changing floors
+  * Removed offset positioning when arriving on new floors
+  * Fixed player position handling for existing floors
+- Design decisions:
+  * Maintained exact x,y coordinates between connected stairs
+  * Simplified player positioning logic
+  * Improved navigation consistency between floors
+
+[2024-03-20] Stair Type Alternation
+- Implemented alternating stair system:
+  * Every floor now has both up '<' and down '>' stairs
+  * Using down stairs on one floor leads to up stairs on next floor
+  * Using up stairs on one floor leads to down stairs on next floor
+- Technical improvements:
+  * Removed special case for floor 1 (now has both stair types)
+  * Enhanced stair generation to ensure non-overlapping positions
+  * Fixed player positioning to match stair type alternation
+- Design decisions:
+  * Maintained consistent stair positions between connected floors
+  * Ensured each floor has both stair types for navigation options
+  * Created more interesting vertical exploration possibilities
+
+[2024-03-20] Maze Generation System
+- Implemented procedural maze generation:
+  * Added random wall placement with spacing constraints
+  * Created guaranteed pathways between stairs
+  * Implemented collision detection with walls
+- Technical features:
+  * Used breadth-first search for pathfinding
+  * Added wall density control (30% coverage)
+  * Implemented path widening algorithm
+- Design decisions:
+  * Protected areas around stairs from wall placement
+  * Created wider corridors for better navigation
+  * Ensured all paths are reachable
+  * Maintained maze consistency when revisiting floors
+
+[2024-03-20] Enhanced Maze Generation
+- Improved wall generation algorithm:
+  * Implemented multi-pass wall growth system
+  * Added wall connectivity rules
+  * Enhanced corridor generation
+- Technical improvements:
+  * Created initial wall seeds (10% coverage)
+  * Added wall growth based on adjacency
+  * Implemented wall cleanup for isolated segments
+- Design decisions:
+  * Increased protected area around stairs
+  * Reduced path widening probability
+  * Created more natural-looking wall structures
+  * Maintained navigable spaces between walls
+
+[2024-03-20] Code Modularization
+- Separated floor generation logic:
+  * Created new floorGenerator.js module
+  * Implemented WallGenerator class for wall generation
+  * Implemented FloorGenerator class for floor management
+- Technical improvements:
+  * Converted to ES6 modules
+  * Improved code organization and separation of concerns
+  * Enhanced maintainability and testability
+- Design decisions:
+  * Separated wall generation into distinct component
+  * Created clear interfaces between modules
+  * Maintained existing functionality while improving structure 
